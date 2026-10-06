@@ -1,0 +1,25 @@
+[build]
+  # Only the static site is published. Keeping it in public/ means files like .env
+  # in the repo root can never be uploaded with the site.
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "#static"
+  port = 8888
+
+# The front end calls /api/<route>; Netlify rewrites it to the TMDB proxy function.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/tmdb/:splat"
+  status = 200
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
